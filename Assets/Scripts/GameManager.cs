@@ -4,6 +4,7 @@ using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using System.Collections;
 using TMPro;
+
 public class GameManager : MonoBehaviour
 {
     public List<Sprite> firstImagePool;
@@ -22,7 +23,6 @@ public class GameManager : MonoBehaviour
     private int wrongSelectionCount = 0;
     private int score = 0;
 
-
     void Start()
     {   
         SpawnRandomImagesFromFirstPool();
@@ -38,7 +38,6 @@ public class GameManager : MonoBehaviour
             DetectImageClick();
         }
     }
-
    
     void SpawnRandomImagesFromFirstPool()
     {
@@ -69,43 +68,29 @@ public class GameManager : MonoBehaviour
     }
     void SpawnImagesFromSecondPool()
     {
-        // Clear previous images
         foreach (Transform child in secondSpawnParent)
         {
             Destroy(child.gameObject);
         }
-
-        // Create a list with the same indices as in the first pool
         List<int> indicesToSpawn = new List<int>();
-
-        // Repeat the indices if there are fewer than 5 images
         while (indicesToSpawn.Count < 5)
         {
-            indicesToSpawn.AddRange(selectedIndices); // Add the selected indices multiple times
+            indicesToSpawn.AddRange(selectedIndices); 
         }
-
-        // Make sure the list has exactly 5 elements
         indicesToSpawn = indicesToSpawn.GetRange(0, 5);
-
-        // Shuffle the list to randomize the order
         ShuffleList(indicesToSpawn);
-
-        // Spawn 5 images, using the indices from the first pool
         float totalWidth = (5 - 1) * secondSetSpacing;
         float startX = -totalWidth / 2;
-
         for (int i = 0; i < indicesToSpawn.Count; i++)
         {
             int index = indicesToSpawn[i];
             GameObject newImage = Instantiate(imagePrefab, secondSpawnParent);
-            newImage.GetComponent<Image>().sprite = secondImagePool[index]; // Use the second image pool
+            newImage.GetComponent<Image>().sprite = secondImagePool[index];
             RectTransform imageRect = newImage.GetComponent<RectTransform>();
             imageRect.anchoredPosition = new Vector2(startX + i * secondSetSpacing, 0);
         }
-
         Debug.Log("Randomized set of 5 images from the second pool spawned with the same indices as the first.");
     }
-
 
     void ShuffleList(List<int> list)
     {
@@ -118,7 +103,6 @@ public class GameManager : MonoBehaviour
         }
     }
 
-
     void DetectImageClick()
     {
         PointerEventData pointerData = new PointerEventData(EventSystem.current);
@@ -126,13 +110,11 @@ public class GameManager : MonoBehaviour
         List<RaycastResult> results = new List<RaycastResult>();
         GraphicRaycaster raycaster = mainCanvas.GetComponent<GraphicRaycaster>();
         raycaster.Raycast(pointerData, results);
-
         if (results.Count > 0)
         {
             GameObject clickedImage = results[0].gameObject;
             Image clickedImageComponent = clickedImage.GetComponent<Image>();
             Image highlightedImageComponent = highlightedImage.GetComponent<Image>();
-
             if (clickedImageComponent.sprite.name == highlightedImageComponent.sprite.name)
             {
                 Destroy(clickedImage);
@@ -145,10 +127,7 @@ public class GameManager : MonoBehaviour
             {
                 wrongSelectionCount++;
                 Debug.Log("Wrong image clicked. Wrong selection count: " + wrongSelectionCount);
-
-                // Trigger the screen shake on wrong image selection
                 FindObjectOfType<ScreenShake>().TriggerShake();
-
                 if (wrongSelectionCount > 1)
                 {
                     Debug.Log("More than 2 wrong selections. Respawning new set...");
@@ -167,7 +146,6 @@ public class GameManager : MonoBehaviour
         }
     }
 
-
     void ClearPreviousImages(Transform parent)
     {
         foreach (Transform child in parent)
@@ -178,15 +156,12 @@ public class GameManager : MonoBehaviour
 
     public void RespawnNewSetOfImages()
     {
-        // Your existing respawn logic
         foreach (Transform child in secondSpawnParent)
         {
             Destroy(child.gameObject);
         }
-
         SpawnImagesFromSecondPool();
-
         Debug.Log("New set of images spawned due to time limit.");
-        timerManager.ResetTimer(); // Reset the timer after respawn
+        timerManager.ResetTimer(); 
     }
 }

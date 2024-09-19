@@ -26,7 +26,6 @@ public class ScreenShake : MonoBehaviour
     IEnumerator Shake()
     {
         float elapsedTime = 0f;
-
         while (elapsedTime < shakeDuration)
         {
             Vector3 randomPoint = originalPosition + (Vector3)Random.insideUnitCircle * shakeMagnitude;
@@ -36,8 +35,6 @@ public class ScreenShake : MonoBehaviour
             elapsedTime += Time.deltaTime;
             yield return null;
         }
-
-        // Reset camera position after shaking
         mainCamera.transform.position = originalPosition;
     }
 }
